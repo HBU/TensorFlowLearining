@@ -10,7 +10,10 @@ Created on Fri Mar  2 15:18:15 2018
 import pandas as pd
 import numpy as np
 import tensorflow as tf
+
 #载入数据，并对数据进行处理
+print("载入数据，并对数据进行处理")
+
 #1
 train = pd.read_csv("train.csv")
 images = train.iloc[:,1:].values
@@ -44,9 +47,9 @@ def dense_to_one_hot(labels_dense,num_classes):
     return labels_one_hot
 
 labels = dense_to_one_hot(labels_flat,labels_count)
-labels = labels.astype(np.unicode)
+labels = labels.astype(np.uint8)
 print('Number of result:({0[0]},{0[1]})'.format(labels.shape))
-#4
+#4--------------------------------------------------------------------------------------
 VALIDATION_SIZE = 2000
 
 validation_images = images[:VALIDATION_SIZE]
@@ -58,20 +61,24 @@ train_labels = labels[VALIDATION_SIZE:]
 #5
 batch_size = 100
 n_batch = len(train_images)/batch_size
+#print(n_batch)
 
 # 建立神经网络，设置损失函数，设置梯度下降的优化参数
+print('建立神经网络，设置损失函数，设置梯度下降的优化参数')
 # 6
 weights = tf.Variable(tf.zeros([784,10]))
 biases = tf.Variable(tf.zeros([10]))
 result = tf.matmul(x,weights)+biases
 prediction = tf.nn.softmax(result)
 
-#7
-loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(labels = y, logits = prediction))
+#7===========================================
+loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels = y, logits = prediction))
 
 #8
 train_step = tf.train.GradientDescentOptimizer(0.1).minimize(loss)
 
+#初始化变量，设置好准确度的计算方法，在Session中运行==============================
+print('初始化变量，设置好准确度的计算方法，在Session中运行')
 #9
 init = tf.global_variables_initializer()
 
@@ -79,10 +86,10 @@ init = tf.global_variables_initializer()
 correct_prediction = tf.equal(tf.argmax(y,1),tf.argmax(prediction,1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction,tf.float32))
 
-with tf.Session as sess:
+with tf.Session() as sess:
     sess.run(init)
     for epoch in range(50):
-        for batch in range(n_batch):
+        for batch in range(int(n_batch)):
             batch_x = train_images[batch*batch_size:(batch+1)*batch_size]
             batch_y = train_labels[batch*batch_size:(batch+1)*batch_size]
             
