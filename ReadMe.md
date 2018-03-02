@@ -1,4 +1,9 @@
-# Tensonflow 启动
+﻿# Tensonflow 启动
+- 方法一：
+1. Anaconda Navigator
+2. 选择环境：TensorFlow
+3. Lunch Spyder
+- 方法二：
 1. anaconda prompt
 2. activate tensorflow
 3. Spyder
